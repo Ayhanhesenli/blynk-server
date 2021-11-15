@@ -133,6 +133,20 @@ public class SetPropertyTest extends SingleServerInstancePerTest {
         assertEquals("выкл", button.offLabel);
     }
 
+    @Test
+    public void testSetOpacityForWidget() throws Exception {
+        clientPair.hardwareClient.setProperty(4, "opacity", "2");
+        clientPair.hardwareClient.verifyResult(ok(1));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(setProperty(1, "1-0 4 opacity 2")));
+
+        clientPair.appClient.reset();
+        clientPair.appClient.send("loadProfileGzipped");
+        Profile profile = clientPair.appClient.parseProfile(1);
+
+        Widget widget = profile.dashBoards[0].findWidgetByPin(0, (short) 4, PinType.VIRTUAL);
+        assertNotNull(widget);
+    }
+
 
     @Test
     public void testSetBooleanProperty() throws Exception {
